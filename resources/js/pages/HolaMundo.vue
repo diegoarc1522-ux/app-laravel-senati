@@ -19,7 +19,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex items-center justify-center">
-            <p class="text-amber-600 text-9x1">Hola Mundo</p>
+            <p class="text-amber-600 text-9xl">Hola Mundo</p>
         </div>
     </AppLayout>
 </template>
