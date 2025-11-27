@@ -22,7 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         >
 
         <div>
-            <p class="text-2x1 text-indigo-400">Diego Sanchez</p>
+            <p class="text-2xl text-indigo-400">Diego Sanchez</p>
         </div>
 
             <div class="grid auto-rows-min gap-4 md:grid-cols-3">
