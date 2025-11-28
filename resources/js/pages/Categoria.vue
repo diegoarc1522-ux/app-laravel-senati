@@ -5,6 +5,7 @@ import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import { BookX, Pencil, Save, SquarePlus, Trash2 } from 'lucide-vue-next';
+import Swal from 'sweetalert2';
 import { onMounted, ref } from 'vue';
 //import { SourceTextModule } from 'vm';
 
@@ -46,12 +47,92 @@ const cerrarModal = () =>{
     mostrarModal.value = false;
 }
 
-const enviarFormulario = () =>{
-    
+const enviarFormulario = async () =>{
     console.log('Diego Sanchez');
     console.log(formulario.value);
 
+    const respuesta = await axios.post('/categorias-data',formulario.value);
+    if(respuesta.data.success){
+        Swal.fire({
+            title: "Recurso Creado",
+            text: "Categoria Creada",
+            icon: "succes",
+        });
+        mostrarModal.value = false;
+        listarCategoria();
+    }else{
+        Swal.fire({
+            title: "Error",
+            text: "No se pudo crear la categoria.",
+            icon: "error"
+        });
+    }
+
+    console.log(respuesta);
 }
+
+ const eliminarCategoria = async (id: number) => {
+     Swal.fire({
+         title: "¿Estas seguro?",
+         text: "Esta acción no se puede revertir",
+         icon: "warning",
+         showCancelButton: true,
+         confirmButtonColor: "#3085d6",
+         cancelButtonColor: "#d33",
+         confirmButtonText: "Si, eliminar",
+         cancelButtonText: "Cancelar",
+     }).then(async (resultado) => {
+
+         if (resultado.isConfirmed) {
+             try {
+                 const respuesta = await axios.delete(`/categorias-data/${id}`);
+
+                 Swal.fire({
+                     title: "Eliminado!",
+                     text: "La categoria fue eliminada correctamente.",
+                     icon: "success"
+                 });
+
+                 listarCategoria();
+             } catch (error) {
+                 Swal.fire({
+                     title: "Error",
+                     text: "No se pudo eliminar la categoria.",
+                     icon: "error"
+                 });
+             }
+         }
+     });
+ };
+
+//     const confirmacion = (id: number) =>{
+//         Swal.fire({
+//         title: "Are you sure?",
+//         text: "You won't be able to revert this!",
+//         icon: "warning",
+//         showCancelButton: true,
+//         confirmButtonColor: "#3085d6",
+//         cancelButtonColor: "#d33",
+//         confirmButtonText: "Yes, delete it!"
+//         }).then((result) => {
+//         if (result.isConfirmed) {
+//             eliminarCategoria(id);
+//         }
+//         });
+//     }
+
+//     const eliminarCategoria = async (id : number) =>{
+//       const respuesta = await axios.delete(`/categorias-data/${id}`);
+//       console.log(respuesta);
+//      if(respuesta.data.success){
+//          Swal.fire({
+//                      title: "Error",
+//                      text: "No se pudo eliminar la categoria.",
+//                      icon: "error"
+//                  });
+//      }
+//       listarCategoria();
+// }
 
 onMounted(listarCategoria);
 </script>
@@ -104,12 +185,14 @@ onMounted(listarCategoria);
 
                                     <div class="flex flex-row gap-4">
                                         <a class="inline-block rounded-sm border border-current px-8 py-3 text-sm font-medium text-indigo-600 transition hover:scale-110 hover:rotate-2"
-                                            href="#">
+                                            href="#" @click="">
+                                            <!-- Editar -->
                                             <Pencil />
                                         </a>
                                         <a class="inline-block rounded-sm border border-current px-8 py-3 text-sm font-medium text-rose-400 transition hover:scale-110 hover:rotate-2"
-                                            href="#">
-                                            <Trash2 />
+                                            href="#" @click="eliminarCategoria(item.id)">
+                                            <!-- Eliminar -->
+                                            <Trash2 /> 
                                         </a>
                                     </div>
 
