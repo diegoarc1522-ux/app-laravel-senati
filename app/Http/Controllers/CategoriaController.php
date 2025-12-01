@@ -39,7 +39,24 @@ class CategoriaController extends Controller
 
     }
 
-    public function editarCategoria(){
+    public function editarCategoria(Request $request, $id_categoria){
+        $validate = $request->validate([
+                    'descripcion' => 'required|string',
+                    'nombre_categoria' => 'required',
+                ]);
+
+                $categoria = Categoria::find($id_categoria);
+
+                $categoria->update([
+                    'descripcion' => $request->descripcion,
+                    'nombre_categoria' => $request->nombre_categoria,
+                ]);
+
+                 return response()->json([
+                'success'=> true,
+                'nombre'=> 'Diego Sanchez',
+                'data'=> $categoria,
+                ]);
 
     }
 
