@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoriaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+use Laravel\Mcp\Enums\Role;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -34,7 +35,8 @@ Route::post('categorias-data',[CategoriaController::class, 'guardarCategoria']);
 Route::put('categorias-data/{id_categoria}',[CategoriaController::class, 'editarCategoria']);
 Route::delete('categorias-data/{id_categoria}',[CategoriaController::class, 'eliminarCategoria']);
 
-
+//Exportar en PDF
+Route::get('categorias-data-pdf',[CategoriaController::class, 'exportarPdfCategoria']);
 
 
 require __DIR__.'/settings.php';

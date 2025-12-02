@@ -4,7 +4,7 @@ import { dashboard } from '@/routes';
 import { type BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
-import { BookX, Pencil, Save, SquarePlus, Trash2 } from 'lucide-vue-next';
+import { BookX, FileText, Pencil, Save, SquarePlus, Trash2 } from 'lucide-vue-next';
 import Swal from 'sweetalert2';
 import { onMounted, ref } from 'vue';
 //import { SourceTextModule } from 'vm';
@@ -13,6 +13,8 @@ const categorias = ref([]);
 const miNombre = ref('');
 const mostrarModal = ref(false);
 const mostrarModalEditar = ref(false);
+const idCategoria = ref('');
+
 
 //Formulario
 const formulario = ref({
@@ -49,8 +51,12 @@ const cerrarModal = () => {
 //Funciones para manipular el modal editar
 const abrirModalEditar = ( dataCategoria : any ) => {
     mostrarModalEditar.value = true;
+    idCategoria.value = dataCategoria.id;
 
+    console.log(dataCategoria.nombre_categoria);
+    console.log(dataCategoria.descripcion);
     console.log(dataCategoria);
+
 
     formulario.value.nombre_categoria = dataCategoria.nombre_categoria,
     formulario.value.descripcion = dataCategoria.descripcion
@@ -88,18 +94,18 @@ const actualizarFormulario = async () => {
     console.log('Diego Sanchez');
     console.log(formulario.value);
 
-    const respuesta = await axios.put('/categorias-data', formulario.value);
+    const respuesta = await axios.put(`/categorias-data/${idCategoria.value}`, formulario.value);
     if (respuesta.data.success) {
         Swal.fire({
             title: 'Recurso Actualizado',
             text: 'Categoria Actualizada',
             icon: 'success',
         });
-        mostrarModal.value = false;
+        mostrarModalEditar.value = false;
         listarCategoria();
     } else {
         Swal.fire({
-            title: 'Error',
+            title: 'Error al Actualizar',
             text: 'No se pudo actualizar la categoria.',
             icon: 'error',
         });
@@ -140,6 +146,11 @@ const eliminarCategoria = async (id: number) => {
         }
     });
 };
+
+const exportarPdf = () =>{
+    const url = '/categorias-data-pdf';
+    window.location.href = url;
+}
 
 //     const confirmacion = (id: number) =>{
 //         Swal.fire({
@@ -184,6 +195,7 @@ onMounted(listarCategoria);
                     class="flex flex-col items-center justify-center text-blue-500"
                     >{{ miNombre }}</small
                 >
+
             </div>
             <div>
                 <!-- <div class="overflow-x-auto">
@@ -325,7 +337,7 @@ onMounted(listarCategoria);
                             Editar Categoria 🎶
                         </h2>
 
-                        <form class="mt-4" @submit.prevent="enviarFormulario">
+                        <form class="mt-4" @submit.prevent="actualizarFormulario">
                             <div class="mb-3">
                                 <label for="nombre_categoria">
                                     <span
@@ -393,7 +405,7 @@ onMounted(listarCategoria);
         </div>
 
         <div class="mx-2 md:mx-10 lg:mx-20">
-            <div>
+            <div class="mb-3 flex gap-4">
                 <a
                     class="group relative inline-flex items-center overflow-hidden rounded-sm border border-current px-8 py-3 text-indigo-600 dark:text-emerald-600"
                     href="#"
@@ -411,6 +423,23 @@ onMounted(listarCategoria);
                     <span
                         class="text-sm font-medium transition-all group-hover:ms-4"
                         >Crear</span
+                    >
+                </a>
+
+                <a
+                    class="group relative inline-flex items-center overflow-hidden rounded-sm border border-current px-8 py-3 text-rose-500 dark:text-rose-500"
+                    href="#"
+                    @click="exportarPdf"
+                >
+                    <span
+                        class="absolute -start-full transition-all group-hover:start-4"
+                    >
+                        <FileText />
+                    </span>
+
+                    <span
+                        class="text-sm font-medium transition-all group-hover:ms-4"
+                        >Exportar PDF</span
                     >
                 </a>
             </div>
@@ -455,7 +484,7 @@ onMounted(listarCategoria);
                                 {{ item.descripcion }}
                             </td>
                             <td class="px-6 py-4">
-                                {{ item.estado }}
+                                {{ item.estado==1? 'Activo' : 'Inactivo' }}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-row gap-4">
